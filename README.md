@@ -6,10 +6,10 @@ AES-256 Encryption: Provides strong encryption using a 256-bit key.
 File Encryption: Encrypt any file with a given key and initialization vector (IV).
 File Decryption: Decrypt encrypted files back to their original form using the same key and IV.
 
-Contributors:
+#Contributors
 VISHNU J NARAYANAN
 
 
 
-License
+#License
 This project is licensed under the MIT License. See the LICENSE file for more details.
