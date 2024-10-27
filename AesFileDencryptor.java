@@ -3,7 +3,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ public class AesFileDencryptor {
 
     private static final String PASSWORD = "@34sfgrvxs";
     private static final String SALT = "some_random_salt";  // A static salt or generate dynamically
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int KEY_LENGTH = 256; // AES key length
 
     public static void main(String[] args) {
@@ -34,13 +34,13 @@ public class AesFileDencryptor {
         SecretKeySpec secretKey = getSecretKey(password);
 
         // Generate the same initialization vector (IV) used during encryption
-        byte[] iv = new byte[16]; // 16 bytes IV for AES (128 bits block size)
+        byte[] iv = new byte[12]; // 12 bytes IV for GCM mode
         Arrays.fill(iv, (byte) 0);  // Using the same IV as in the encryption
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv); // 128-bit authentication tag length
 
         // Initialize Cipher for decryption
         Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
 
         // Open file streams
         try (FileInputStream fis = new FileInputStream(new File(inputFilePath));
