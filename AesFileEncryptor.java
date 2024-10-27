@@ -1,4 +1,6 @@
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import java.security.SecureRandom;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -14,7 +16,7 @@ public class AesFileEncryptor {
 
     private static final String PASSWORD = "@34sfgrvxs";
     private static final String SALT = "some_random_salt";  // A static salt or generate dynamically
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int KEY_LENGTH = 256; // AES key length
 
     public static void main(String[] args) {
@@ -34,13 +36,14 @@ public class AesFileEncryptor {
         SecretKeySpec secretKey = getSecretKey(password);
 
         // Generate a random initialization vector (IV)
-        byte[] iv = new byte[16]; // 16 bytes IV for AES (128 bits block size)
-        Arrays.fill(iv, (byte) 0);  // Just using a simple IV for now
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        byte[] iv = new byte[12]; // 12 bytes IV for GCM mode
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(iv);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv); // 128-bit authentication tag length
 
         // Initialize Cipher for encryption
         Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
 
         // Open file streams
         try (FileInputStream fis = new FileInputStream(new File(inputFilePath));
