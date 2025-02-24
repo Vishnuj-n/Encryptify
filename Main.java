@@ -1,11 +1,14 @@
 import java.util.Scanner;
-
+import java.io.Console;
 import security.Decrypt;
 import security.Encrypt;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Console console = System.console();
+
+        
 
         while (true) {
             System.out.println("1. Encrypt a file");
@@ -18,15 +21,15 @@ public class Main {
                 if (choice.equals("1")) {
                     System.out.print("Enter the file path to encrypt: ");
                     String filePath = scanner.nextLine();
-                    System.out.print("Enter password for encryption (8 charater): ");
-                    String password = scanner.nextLine();
+                    char[] passwordArray = console.readPassword("Enter password for encryption (8 characters): ");
+                    String password = new String(passwordArray);
                     Encrypt encryptor = new Encrypt(password);
                     encryptor.encryptFile(filePath);
                 } else if (choice.equals("2")) {
                     System.out.print("Enter the file path to decrypt: ");
                     String filePath = scanner.nextLine();
-                    System.out.print("Enter password for decryption: ");
-                    String password = scanner.nextLine();
+                    char[] passwordArray = console.readPassword("Enter password for decryption: ");
+                    String password = new String(passwordArray);
                     Decrypt decryptor = new Decrypt(password);
                     decryptor.decryptFile(filePath);
                 } else if (choice.equals("3")) {
