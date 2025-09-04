@@ -1,7 +1,7 @@
 package security;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +11,8 @@ import java.util.Arrays;
 
 public class Encrypt {
     private SecretKey secretKey;
-    private IvParameterSpec iv;
+    private GCMParameterSpec gcmSpec;
+    private byte[] ivBytes;
 
     public Encrypt(String password) throws Exception {
         if (password.length() != 8) {
@@ -20,9 +21,11 @@ public class Encrypt {
 
         byte[] key = Arrays.copyOf(password.getBytes("UTF-8"), 16); // Ensure the key is 16 bytes long
         this.secretKey = new SecretKeySpec(key, "AES");
-        byte[] ivBytes = new byte[16];
-        new SecureRandom().nextBytes(ivBytes);
-        this.iv = new IvParameterSpec(ivBytes);
+        // For GCM mode, use a 12-byte IV
+        this.ivBytes = new byte[12];
+        new SecureRandom().nextBytes(this.ivBytes);
+        // GCM tag size is typically 128 bits (16 bytes)
+        this.gcmSpec = new GCMParameterSpec(128, this.ivBytes);
     }
 
     public void encryptFile(String filePath) throws Exception {
@@ -31,12 +34,12 @@ public class Encrypt {
         byte[] inputBytes = new byte[(int) inputFile.length()];
         inputStream.read(inputBytes);
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
         byte[] outputBytes = cipher.doFinal(inputBytes);
 
         FileOutputStream outputStream = new FileOutputStream(filePath + ".enc");
-        outputStream.write(iv.getIV());
+        outputStream.write(ivBytes);
         outputStream.write(outputBytes);
 
         inputStream.close();
