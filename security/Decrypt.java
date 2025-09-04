@@ -1,7 +1,7 @@
 package security;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,15 +19,16 @@ public class Decrypt {
     public void decryptFile(String filePath) throws Exception {
         File inputFile = new File(filePath);
         FileInputStream inputStream = new FileInputStream(inputFile);
-        byte[] ivBytes = new byte[16];
+        // GCM recommends 12-byte IV
+        byte[] ivBytes = new byte[12];
         inputStream.read(ivBytes);
-        IvParameterSpec iv = new IvParameterSpec(ivBytes);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, ivBytes);
 
-        byte[] inputBytes = new byte[(int) inputFile.length() - 16];
+        byte[] inputBytes = new byte[(int) inputFile.length() - 12];
         inputStream.read(inputBytes);
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
         byte[] outputBytes = cipher.doFinal(inputBytes);
 
         String outputFilePath = filePath.replace(".enc", "");
