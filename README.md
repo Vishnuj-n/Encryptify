@@ -4,7 +4,7 @@ Encryptify is a secure file encryption/decryption tool that uses the Advanced En
 
 ## Features
 
-- **AES-256 Encryption**: Industry-standard encryption using 256-bit keys
+- **AES-128 Encryption**: Secure encryption using 128-bit keys (derived from an 8-character password)
 - **GCM Mode**: Provides both confidentiality and authenticity of data
 - **Secure Password Handling**: Uses secure password input (characters not displayed)
 - **Simple CLI Interface**: Easy-to-use command-line interface
@@ -90,8 +90,8 @@ File decrypted and saved as /path/to/your/file.txt
 ## How It Works
 
 1. **Encryption Process**:
-   - User provides a password (8 characters)
-   - Password is used to generate a 128-bit AES key
+   - User provides an 8-character password
+   - Password is used to generate a 128-bit AES key (AES-128)
    - A random 12-byte IV (Initialization Vector) is generated
    - File is encrypted using AES-256 in GCM mode
    - IV is prepended to the encrypted file
