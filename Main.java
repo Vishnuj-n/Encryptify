@@ -1,3 +1,8 @@
+import java.util.Scanner;
+import java.io.Console;
+import security.Decrypt;
+import security.Encrypt;
+
 /**
  * Main class for the Encryptify application.
  * Provides a command-line interface for file encryption and decryption.

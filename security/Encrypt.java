@@ -11,9 +11,10 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 /**
- * Provides file encryption functionality using AES-256 in GCM mode.
+ * Provides file encryption functionality using AES-128 in GCM mode.
  * This class handles the encryption of files with a user-provided password,
  * using secure cryptographic practices including random IV generation.
+ * Note: Uses a 128-bit key derived from an 8-character password.
  */
 public class Encrypt {
     // Secret key for encryption/decryption
